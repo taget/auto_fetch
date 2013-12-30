@@ -25,6 +25,7 @@
 from config import config
 from mail import mail
 import logging
+import os
 
 class autofetch:
 	def __init__(self):
@@ -38,7 +39,8 @@ class autofetch:
 		# set log file
 		self._logger = logging.getLogger()
 		hdlr = logging.FileHandler(self._logger_file)
-		formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+		formatter = logging.Formatter('%(asctime)s \
+		                     %(levelname)s %(message)s')
 		hdlr.setFormatter(formatter)
 		self._logger.addHandler(hdlr)
 		self._logger.setLevel(logging.NOTSET)
@@ -46,7 +48,7 @@ class autofetch:
 		# mail object
 		self._mailobj = mail(self._conf)
 		# mail object
-		
+
 	def info(self, msg):
 		self._logger.info(msg)
 
@@ -56,10 +58,49 @@ class autofetch:
 	def test(self):
 		print self._git_list
 
+	def persist(self, obj):
+		'''
+		persist obj to a file
+		'''
+		dirname =  obj.get_git_name()
+		filename = obj.get_subject()
+		if not os.path.exists(dirname):
+			os.mkdir(dirname)
+		file_name = dirname + '/' + filename
+		self.info("ready to persist:" + file_name)
+		try:
+			f = open(file_name, 'w')
+			print obj.get_body()
+			f.write(obj.get_body())
+			self.info("persist ok : " + file_name)
+		except:
+			self.error("persist error : " + file_name)
+			pass
+
+	def persist_all(self, objs):
+		for obj in objs:
+			if obj.is_valid():
+				self.persist(obj)
+	
+	def start(self):
+		objs = self._mailobj.get_mailobjs('^\[Frobisher\]')
+		for obj in objs:
+			if obj.is_valid() and obj.get_git_name() in \
+			                    self._git_list:
+				self.info(obj.get_git_name())
+				
+		self.persist_all(objs)
+		
+# create a summary log
+# how many patch
+# which is valid
+	def summary(self):
+		pass
+		
 def main():
 	
 	af = autofetch()
-	af.test()
+	af.start()
 
 if __name__ == '__main__':
 	main()

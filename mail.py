@@ -19,7 +19,7 @@ class mail():
 		self._mailserver = conf.get('mailserver')
 		self._port = 993
 		
-	def get_mailobj(self, subject):
+	def get_mailobjs(self, subject):
 		'''
 		get mail obj
 		'''
@@ -61,7 +61,7 @@ if __name__ == "__main__":
 	# 
 	c = config()
 	m = mail(c)
-	objs = m.get_mailobj('^\[Frobisher\]')
+	objs = m.get_mailobjs('^\[Frobisher\]')
 	
 	for obj in objs:
 		print obj

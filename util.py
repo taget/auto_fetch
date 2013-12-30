@@ -23,6 +23,7 @@
 #  
 
 
+import string
 
 def get_branch_gitname(sb):
 	try:
@@ -31,8 +32,15 @@ def get_branch_gitname(sb):
 		raise
 	return (tmp[0], tmp[2])
 	
+def trim(sb):
+	r = sb
+	r = string.replace(r, '\\' , '_')
+	r = string.replace(r, '/' , '_')
+	return r
+	
 if __name__ == "__main__":
-	(a, b) = get_name('[Frobisher] [build7 PATCH qemu v3 04/14] core: add more cow-bell')
+	sb = '[Frobisher] [build7 PATCH qemu v3 04/14] core: add more cow-bell'
+	(a, b) = get_branch_gitname(sb)
 	print a
 	print b
-
+	print trim(sb)
