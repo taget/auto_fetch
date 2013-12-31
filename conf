@@ -11,4 +11,4 @@ kernel_url = git://9.3.189.26/frobisher/kernel.git
 kimchi_url = git://9.3.189.26/frobisher/kimchi.git
 
 log = auto_fetch.log
-
+patchdir = PATH

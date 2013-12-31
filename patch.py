@@ -14,9 +14,13 @@ class patch():
 		self._name = ''
 		self._from = ''
 		self._date = ''
+		self._path = ''
 		
 		self.pass_message()
 	
+	def set_path(self, path):
+		self._path = path
+
 	def get_body(self):
 		return self._body
 		

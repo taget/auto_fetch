@@ -24,6 +24,7 @@
 
 from config import config
 from mail import mail
+from mygit import mygit
 import log
 import os
 
@@ -32,28 +33,22 @@ class autofetch:
 	def __init__(self):
 		
 		self._conf = config()
-		self._user = self._conf.get('user')
-		self._password = self._conf.get('password')
 		self._git_list = self._conf.get('git').split(',')
 		self._logger = log.getLogger(self.__module__)
-		
+		self._patchdir = self._conf.get('patchdir')
 		# mail object
 		self._mailobj = mail(self._conf)
-		# mail object
 
 	@property
 	def logger(self):
 		"logger is a property not a function"
 		return self._logger
 	
-	def test(self):
-		print self._git_list
-
 	def persist(self, obj):
 		'''
 		persist obj to a file
 		'''
-		dirname =  obj.get_git_name()
+		dirname =  self._patchdir + '/' + obj.get_git_name()
 		filename = obj.get_subject()
 		if not os.path.exists(dirname):
 			os.mkdir(dirname)
@@ -62,12 +57,16 @@ class autofetch:
 		try:
 			f = open(file_name, 'w')
 			f.write(obj.get_body())
+			obj.set_path(file_name)
 			self.logger.info("persist [%s] ok ! " % file_name)
 		except:
 			self.logger.error("persist [%s] error !" % file_name)
 			pass
 
 	def persist_all(self, objs):
+		if os.path.exists(self._patchdir):
+			os.remove(self._patchdir)
+		os.mkdir(self._patchdir)
 		for obj in objs:
 			if obj.is_valid():
 				self.persist(obj)
@@ -80,9 +79,10 @@ class autofetch:
 
 		self.persist_all(objs)
 		print "get [%d] patch obj(s)" % len(objs)
-# create a summary log
-# how many patch
-# which is valid
+
+	# create a summary log
+	# how many patch
+	# which is valid
 	def summary(self, obj):
 		self.logger.debug("Valid: [%s]" % 'yes' \
 		             if obj.is_valid() else 'No')
