@@ -82,7 +82,7 @@ class autofetch:
 		self.logger.debug("Subject: [%s]" % obj.get_subject())
 		self.logger.debug("Sender: [%s]" % obj.get_sender())
 		self.logger.debug("Date: [%s]" % obj.get_date())
-
+		self.logger.debug("Saved to: [%s]" % obj.get_path())
 
 	def clean_dir(self, base, l):
 		for s in l:
@@ -90,7 +90,7 @@ class autofetch:
 			if os.path.exists(path):
 				shutil.rmtree(path)
 
-	def process_git(self):
+	def create_git(self, objs):
 		pass
 		
 
@@ -109,8 +109,6 @@ class autofetch:
 		print "get [%d] patch obj(s)" % len(objs)
 
 
-
-				
 def main():
 	
 	af = autofetch()

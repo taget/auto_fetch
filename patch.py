@@ -21,6 +21,9 @@ class patch():
 	def set_path(self, path):
 		self._path = path
 
+	def get_path(self):
+		return self._path
+
 	def get_body(self):
 		return self._body
 		
