@@ -27,6 +27,7 @@ from mail import mail
 from mygit import mygit
 import log
 import os
+import shutil
 
 
 class autofetch:
@@ -36,6 +37,7 @@ class autofetch:
 		self._git_list = self._conf.get('git').split(',')
 		self._logger = log.getLogger(self.__module__)
 		self._patchdir = self._conf.get('patchdir')
+		self._git_dir = self._conf.get('gitdir')
 		# mail object
 		self._mailobj = mail(self._conf)
 
@@ -65,21 +67,12 @@ class autofetch:
 
 	def persist_all(self, objs):
 		if os.path.exists(self._patchdir):
-			os.remove(self._patchdir)
+			shutil.rmtree(self._patchdir)
 		os.mkdir(self._patchdir)
 		for obj in objs:
 			if obj.is_valid():
 				self.persist(obj)
 	
-	def start(self):
-		objs = self._mailobj.get_mailobjs('^\[Frobisher\]')
-		for obj in objs:
-			if obj.get_git_name() in self._git_list:
-				self.summary(obj)
-
-		self.persist_all(objs)
-		print "get [%d] patch obj(s)" % len(objs)
-
 	# create a summary log
 	# how many patch
 	# which is valid
@@ -89,7 +82,35 @@ class autofetch:
 		self.logger.debug("Subject: [%s]" % obj.get_subject())
 		self.logger.debug("Sender: [%s]" % obj.get_sender())
 		self.logger.debug("Date: [%s]" % obj.get_date())
+
+
+	def clean_dir(self, base, l):
+		for s in l:
+			path = base + '/' + s
+			if os.path.exists(path):
+				shutil.rmtree(path)
+
+	def process_git(self):
+		pass
 		
+
+	def start(self):
+		
+		# clean up
+		self.clean_dir(self._patchdir, self._git_list)
+		self.clean_dir(self._git_dir, self._git_list)
+		# get mail objs
+		objs = self._mailobj.get_mailobjs('^\[Frobisher\]')
+		for obj in objs:
+			if obj.get_git_name() in self._git_list:
+				self.summary(obj)
+
+		self.persist_all(objs)
+		print "get [%d] patch obj(s)" % len(objs)
+
+
+
+				
 def main():
 	
 	af = autofetch()

@@ -5,7 +5,6 @@ from git import *
 import git
 
 class mygit:
-	
 	def __init__(self, repo_dir, git_url):
 		self._repo_dir = repo_dir
 		self._git_url = git_url
@@ -41,7 +40,6 @@ class mygit:
 		for patch in patch_list:
 			if False == self.am(patch):
 				return False
-	print 'done'
 	
 		
 if __name__ == "__main__":

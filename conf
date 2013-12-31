@@ -3,12 +3,14 @@ user = taget
 password = jimmy@3bm
 maildir = frobisher-patch
 mailserver = imap.linux.ibm.com
-
-git = qemu,libvirt,kimchi,kernel
-qemu_url = git://9.3.189.26/frobisher/qemu.git
-libvirt_url = git://9.3.189.26/frobisher/libvirt.git
-kernel_url = git://9.3.189.26/frobisher/kernel.git
-kimchi_url = git://9.3.189.26/frobisher/kimchi.git
-
 log = auto_fetch.log
-patchdir = PATH
+patchdir = PATCHDIR
+git = qemu,libvirt,kimchi,kernel
+gitdir = GIT
+
+[data]
+qemu = git://9.3.189.26/frobisher/qemu-test.git
+libvirt = git://9.3.189.26/frobisher/libvirt-test.git
+kernel = git://9.3.189.26/frobisher/kernel-test.git
+kimchi  = git://9.3.189.26/frobisher/kimchi-test.git
+

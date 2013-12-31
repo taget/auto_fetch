@@ -32,7 +32,10 @@ class config:
 		
 	def get(self, var):
 		return self._configparser.get('conf', var)
-		
+	
+	def get_data(self, var):
+		return self._configparser.get('data', var)
+
 	def set(self, var, val):
 		pass
 		
@@ -40,5 +43,6 @@ if __name__ == "__main__":
 	conf = config()
 	print conf.get('user')
 	print conf.get('password')
+	print conf.get_data('qemu')
 
 
