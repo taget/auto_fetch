@@ -31,15 +31,22 @@ class patch():
 	
 	def get_subject(self):
 		return self._message_subject
-		
+
+	def get_sender(self):
+		return self._from
+	
+	def get_date(self):
+		return self._date
+
 	def pass_message(self):
-		self._message_subject = util.trim(self._message['subject'])
+		self._message_subject = \
+		          util.trim(self._message['subject'].lower())
 		self._from = self._message['From']
 		self._date = self._message['Date']
 		self._body = self._message.get_payload(decode=True)
 		try:
 			(self._build, self._name) = \
-			      util.get_branch_gitname(self._message_subject)
+			util.get_branch_gitname(self._message_subject)
 		except:
 			self._valid = False
 		else:

@@ -24,8 +24,9 @@
 
 from config import config
 from mail import mail
-import logging
+import log
 import os
+
 
 class autofetch:
 	def __init__(self):
@@ -34,26 +35,16 @@ class autofetch:
 		self._user = self._conf.get('user')
 		self._password = self._conf.get('password')
 		self._git_list = self._conf.get('git').split(',')
-		self._logger_file = self._conf.get('log')
-		
-		# set log file
-		self._logger = logging.getLogger()
-		hdlr = logging.FileHandler(self._logger_file)
-		formatter = logging.Formatter('%(asctime)s \
-		                     %(levelname)s %(message)s')
-		hdlr.setFormatter(formatter)
-		self._logger.addHandler(hdlr)
-		self._logger.setLevel(logging.NOTSET)
+		self._logger = log.getLogger(self.__module__)
 		
 		# mail object
 		self._mailobj = mail(self._conf)
 		# mail object
 
-	def info(self, msg):
-		self._logger.info(msg)
-
-	def error(self, msg):
-		self._logger.error(msg)
+	@property
+	def logger(self):
+		"logger is a property not a function"
+		return self._logger
 	
 	def test(self):
 		print self._git_list
@@ -67,14 +58,13 @@ class autofetch:
 		if not os.path.exists(dirname):
 			os.mkdir(dirname)
 		file_name = dirname + '/' + filename
-		self.info("ready to persist:" + file_name)
+		self.logger.debug("ready to persist [%s]" % file_name)
 		try:
 			f = open(file_name, 'w')
-			print obj.get_body()
 			f.write(obj.get_body())
-			self.info("persist ok : " + file_name)
+			self.logger.info("persist [%s] ok ! " % file_name)
 		except:
-			self.error("persist error : " + file_name)
+			self.logger.error("persist [%s] error !" % file_name)
 			pass
 
 	def persist_all(self, objs):
@@ -85,17 +75,20 @@ class autofetch:
 	def start(self):
 		objs = self._mailobj.get_mailobjs('^\[Frobisher\]')
 		for obj in objs:
-			if obj.is_valid() and obj.get_git_name() in \
-			                    self._git_list:
-				self.info(obj.get_git_name())
-				
+			if obj.get_git_name() in self._git_list:
+				self.summary(obj)
+
 		self.persist_all(objs)
-		
+		print "get [%d] patch obj(s)" % len(objs)
 # create a summary log
 # how many patch
 # which is valid
-	def summary(self):
-		pass
+	def summary(self, obj):
+		self.logger.debug("Valid: [%s]" % 'yes' \
+		             if obj.is_valid() else 'No')
+		self.logger.debug("Subject: [%s]" % obj.get_subject())
+		self.logger.debug("Sender: [%s]" % obj.get_sender())
+		self.logger.debug("Date: [%s]" % obj.get_date())
 		
 def main():
 	
